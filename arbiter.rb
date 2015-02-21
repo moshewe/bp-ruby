@@ -21,10 +21,10 @@ class Arbiter
       sleep(1)
       nil
     else
-      p "legal events: #{legal}"
+      puts "legal events: #{legal}"
       sleep(1)
       e = legal.sample
-      p "event selected is #{e}"
+      puts "event selected is #{e}"
       sleep(1)
       e
     end
