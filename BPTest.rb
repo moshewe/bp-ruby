@@ -3,6 +3,8 @@ require_relative 'bp'
 
 class BpTest < Test::Unit::TestCase
 
+  attr_accessor :prog
+
   def setup
     $line = []
     arb = Arbiter.new
@@ -23,53 +25,51 @@ class BpTest < Test::Unit::TestCase
   #   end
   # end
 
-  class Tap1 < BThread
-
-    def initialize(*args)
-      name = "Tap1"
-      program = @prog
-      super args
-    end
-
-    def body
-      p "bt1 started!"
-      sleep(2)
-      for i in 1..3 do
-        bsync(:request => [:e1],
-              :wait => [],
-              :block => [])
-        p 1
-        sleep(2)
-        $line << 1
-      end
-    end
-  end
-
-  class Tap2 < BThread
-    @name = "Tap2"
-    @program = @prog
-
-    def body
-      p "bt2 started!"
-      sleep(2)
-      for i in 1..3 do
-        bsync(:request => [:e2],
-              :wait => [],
-              :block => [])
-        p 1
-        sleep(2)
-        $line << 1
-      end
-    end
-  end
-
   class TestAlternator < BpTest
+    class Tap1 < BThread
+      def initialize(args = {})
+        super ({:bodyfunc =>
+                    lambda {
+                      p "bt1 started!"
+                      sleep(2)
+                      for i in 1..3 do
+                        bsync(:request => [:e1],
+                              :wait => [],
+                              :block => [])
+                        puts 1
+                        sleep(1)
+                        $line << 1
+                      end
+                    }}.merge(args))
+      end
+    end
+
+    class Tap2 < BThread
+      def initialize(args={})
+        super(args)
+        self.bodyfunc = lambda {
+          puts 'bt2 started!'
+          sleep(2)
+          for i in 1..3 do
+            bsync(:request => [:e2],
+                  :wait => [],
+                  :block => [])
+            puts 2
+            sleep(1)
+            $line << 2
+          end
+        }
+      end
+    end
+
     def test_alternating
-      bt1 = Tap1.new
-      bt2 = Tap2.new
+      bt1 = Tap1.new({:name => "Tap1",
+                      :program => @prog})
+      bt2 = Tap2.new({:name => "Tap2",
+                      :program => @prog})
       btAlternator = BThread.new({:name => "Alternator",
                                   :program => @prog,
-                                  :body => lambda {
+                                  :bodyfunc => lambda {
                                     p "alternator started!"
 
                                     sleep(1)

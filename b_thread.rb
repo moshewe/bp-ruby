@@ -8,23 +8,26 @@ class BThread
   #set-able in constructor
   attr_accessor :name
   attr_accessor :program
-  attr_accessor :body
+  attr_accessor :bodyfunc
 
   def body
-    # => implement bthread body here
-  end  
+    @bodyfunc.call
+    @alive = false
+  end
 
-  def initialize(*args)
+  def initialize(args = {})
     @request = [:startevent]
     @wait = [:startevent]
     @block = []
+    @alive = true
     # puts args
-    if args.is_a? Hash
-      args.each do |k, v|
-        instance_variable_set("@#{k}", v) unless v.nil?
-        # puts "#{k} #{v}"
-      end
+    # if args.is_a? Hash
+    args.each do |k, v|
+      # p "key is #{k}, value is #{v}"
+      instance_variable_set("@#{k}", v) unless v.nil?
+      # p "set #{instance_variable_get("@#{k}")}"
     end
+    # end
   end
 
   def bsync(args = {})
@@ -51,9 +54,13 @@ class BThread
     end
   end
 
+  def alive?
+    @alive
+  end
+
   def inspect
-    if @name
-      @name
+    if name
+      name
     else
       self.class.name + self.hash.inspect
     end

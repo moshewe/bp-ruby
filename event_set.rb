@@ -10,7 +10,11 @@ module EventSet
       "any"
     end
 
-    @@instance = EventSet::Any.new
+    @@instance = Any.new
+
+    def self.instance
+      return @@instance
+    end
   end
 
   class None < BEvent
@@ -22,14 +26,18 @@ module EventSet
       "none"
     end
 
-    @@instance = EventSet::None.new
+    @@instance = None.new
+
+    def self.instance
+      return @@instance
+    end
   end
 
-  def any
+  def EventSet.any
     return Any.instance
   end
 
-  def none
+  def EventSet.none
     return None.instance
   end
 end
