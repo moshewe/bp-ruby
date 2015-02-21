@@ -1,2 +1,0 @@
-class ContinuationBthread
-end
