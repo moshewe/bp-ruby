@@ -5,17 +5,11 @@ class Arbiter
   def next_event
     p "arbiting next event"
     sleep(1)
-    legal = []
-    program.bthreads.each do |bt|
-      p "%s asked for %s " %[bt.inspect, bt.request]
-      sleep(1)
-      legal.concat bt.request
-    end
+    select_event
+  end
 
-    program.bthreads.each do |bt|
-      legal.select! { |e| !bt.block.include? e }
-    end
-
+  def select_event
+    legal = program.legal_events
     if legal.empty?
       p "need external event, legal is empty!"
       sleep(1)

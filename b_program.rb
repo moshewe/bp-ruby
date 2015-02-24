@@ -77,4 +77,24 @@ class BProgram
   def bsync
     @cont.call
   end
+
+  # legal events to trigger can only be req&&!block
+  def legal_events
+    requested = []
+    bthreads.each do |bt|
+      p "%s asked for %s" %[bt.inspect, bt.request]
+      sleep(1)
+      requested.concat bt.request
+    end
+
+    blocked = []
+    bthreads.each do |bt|
+      p "%s blocks %s" %[bt.block]
+      sleep(1)
+      blocked.concat bt.block
+    end
+
+    requested-blocked
+  end
+
 end

@@ -58,6 +58,10 @@ class BThread
     @alive
   end
 
+  def state
+
+  end
+
   def inspect
     if name
       name
