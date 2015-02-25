@@ -3,7 +3,7 @@ require 'continuation'
 
 class BProgram
 
-  attr_accessor :arbiter, :bthreads, :le
+  attr_accessor :arbiter, :bthreads, :le, :interactive
   attr_accessor :cont #, nil
 
   def initialize(arbiter)
@@ -60,11 +60,15 @@ class BProgram
     else
       if @interactive
         p "need external event!"
-        gets
       else
         p "DEADLOCK!"
       end
     end
+  end
+
+  def fire(ev)
+    le = ev
+    bp_loop
   end
 
   def resume(bt, le)

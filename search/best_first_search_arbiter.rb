@@ -19,9 +19,9 @@ class BestFirstSearchArbiter < Arbiter
     while (!openlist.empty?)
       best = openlist.pop
       if terminal? best then
-        return best
+        return best.actions.first
       end
-      openlist.push(expand best)
+      openlist.concat best.expand
       openlist.sort_by { |n| h(n) }
     end
     nil
@@ -33,9 +33,4 @@ class BestFirstSearchArbiter < Arbiter
     sol.actionlist.first
   end
 
-  def expand(node)
-    legal_events.map {|ev|
-
-    }
-  end
 end

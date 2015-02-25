@@ -1,0 +1,2 @@
+class DetectDraw
+end

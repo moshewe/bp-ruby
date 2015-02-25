@@ -1,3 +1,4 @@
+# AKA BPState
 class SearchNode
 
   attr_accessor :bt_states
@@ -21,6 +22,7 @@ class SearchNode
     program.legal_events.map {|ev|
       program.fire(ev)
       child = SearchNode.new program
+      child.action = actions + ev
       restore
       child
     }
