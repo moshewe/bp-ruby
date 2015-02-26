@@ -40,4 +40,24 @@ module EventSet
   def EventSet.none
     return None.instance
   end
+
+  class EventsOfClass < BEvent
+
+    def initialize(klass)
+      @klass = klass
+    end
+
+    def include?(e)
+      e.is_a? @klass
+    end
+
+    def inspect
+      "events_of_class_#{@klass}"
+    end
+
+  end
+
+  def EventSet.event_of_class(klass)
+    return EventsOfClass.new klass
+  end
 end

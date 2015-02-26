@@ -84,25 +84,9 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="jdk" jdkName="RVM: ruby-2.2.0" jdkType="RUBY_SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="after_do (v0.3.1, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="furoshiki (v0.3.0, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="jruby-jars (v1.7.19, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="jruby-rack (v1.1.18, RVM: ruby-2.2.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json (v1.8.1, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="mini_portile (v0.6.2, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="nokogiri (v1.6.4.1, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="plist (v3.1.0, RVM: ruby-2.2.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="power_assert (v0.2.2, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rake (v10.4.2, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rubyzip (v1.1.7, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="shoes (v4.0.0.pre3, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="shoes-core (v4.0.0.pre3, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="shoes-highlighter (v1.0.0, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="shoes-manual (v4.0.0, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="shoes-package (v4.0.0.pre3, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="shoes-swt (v4.0.0.pre3, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="swt (v4.4, RVM: ruby-2.2.0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="qtbindings (v4.8.6.0, RVM: ruby-2.2.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="test-unit (v3.0.8, RVM: ruby-2.2.0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="warbler (v1.4.5, RVM: ruby-2.2.0) [gem]" level="application" />
   </component>
 </module>
