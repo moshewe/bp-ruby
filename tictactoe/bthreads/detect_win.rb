@@ -1,10 +1,13 @@
+require_relative '../../b_thread'
+require_relative '../ttt_events'
+
 class DetectWin < BThread
-  include(TTTEvents)
+  include TTTEvents
 
   attr_accessor :win_event, :first, :second, :third
 
   def initialize(winevent, first, second, third)
-    super
+
     @win_event = winevent
     @first = first
     @second = second
@@ -31,7 +34,7 @@ class DetectWin < BThread
     permutations = [[0, 1, 2], [0, 2, 1], [1, 0, 2],
                     [1, 2, 0], [2, 0, 1], [2, 1, 0]]
 
-    row_wins = 1..3.flat_map do |row|
+    row_wins = (1..3).flat_map do |row|
       (permutations.map do |p|
         DetectWin.new xwin, X.new(row, p[0]),
                       X.new(row, p[1]),
@@ -43,7 +46,7 @@ class DetectWin < BThread
       end
     end
 
-    col_wins = 1..3.flat_map do |col|
+    col_wins = (1..3).flat_map do |col|
       (permutations.map do |p|
         DetectWin.new xwin, X.new(p[0], col),
                       X.new(p[1], col),
@@ -55,7 +58,7 @@ class DetectWin < BThread
       end
     end
 
-    main_diagonal_wins = (permutations.map do
+    main_diagonal_wins = (permutations.map do |p|
       DetectWin.new xwin, X.new(p[0], p[0]),
                     X.new(p[1], p[1]),
                     X.new(p[2], p[2])
@@ -65,8 +68,14 @@ class DetectWin < BThread
                     O.new(p[2], p[2])
     end
 
-    inverse_diagonal_wins = permutations.map do
-
+    inverse_diagonal_wins = (permutations.map do |p|
+      DetectWin.new xwin, X.new(p[0], 2 - p[0]),
+                    X.new(p[1], 2 - p[1]),
+                    X.new(p[2], 2 - p[2])
+    end).concat permutations.map do |p|
+      DetectWin.new owin, O.new(p[0], 2 - p[0]),
+                    O.new(p[1], 2 - p[1]),
+                    O.new(p[2], 2 - p[2])
     end
 
     row_wins + col_wins + main_diagonal_wins + inverse_diagonal_wins

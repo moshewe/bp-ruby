@@ -1,10 +1,22 @@
+require_relative '../event_set'
+
 module TTTEvents
-  include(EventSet)
+  include EventSet
+
+  attr_reader :draw, :owin, :xwin, :game_over
+
+  def initialize
+    super
+    @draw = BEvent.new "Draw"
+    @owin = BEvent.new "OWin"
+    @xwin = BEvent.new "Xwin"
+    @game_over = BEvent.new "Game Over"
+  end
 
   class Move < BEvent
     attr_accessor :x, :y
 
-    def initialize(x,y)
+    def initialize(x, y)
       @x = x
       @y = y
     end
@@ -15,14 +27,14 @@ module TTTEvents
   end
 
   class X < Move
-    def initialize(x,y)
+    def initialize(x, y)
       super x, y
       @name = "X(#{x},#{y})"
     end
   end
 
   class O < Move
-    def initialize(x,y)
+    def initialize(x, y)
       super x, y
       @name = "O(#{x},#{y})"
     end
@@ -61,19 +73,15 @@ module TTTEvents
     end
   end
 
-  def TTTEvents.xevents
+  def xevents
     return XEvents.instance
   end
 
-  def TTTEvents.oevents
+  def oevents
     return OEvents.instance
   end
 
-  @draw = BEvent.new "Draw"
-  @owin = BEvent.new "OWin"
-  @xwin = BEvent.new "Xwin"
-  @game_over = BEvent.new "Game Over"
-
-  attr_accessor :draw, :owin, :xwin, :game_over
-
+  def win_event(ev)
+    ev == @owin || ev == @xwin
+  end
 end

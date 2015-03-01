@@ -1,20 +1,18 @@
 # AKA BPState
 class SearchNode
 
-  attr_accessor :bt_states
-  attr_accessor :program
-  attr_accessor :actions
+  attr_accessor :bts, :program, :actions
 
   def initialize(program)
     @program = program
     @actions = []
-    @bt_states = {}
+    @bts = {}
     program.bthreads.each { |bth|
       bts = {}
       bth.instance_variables.each do |var|
         bts[var] = instance_variable_get(var)
       end
-      bt_states[bth] = bts
+      bts[bth] = bts
     }
   end
 
@@ -29,7 +27,7 @@ class SearchNode
   end
 
   def restore
-    bt_states.each do |bth, bts|
+    bts.each do |bth, bts|
       bts.each do |varname, varval|
         bth.instance_variable_set varname, varval
       end

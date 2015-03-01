@@ -2,7 +2,8 @@ require_relative '../../bp'
 
 class SquareTaken < BThread
 
-  attr_accessor :row, :col
+  @board
+  attr_accessor :row, :col, :board
 
   def initialize(row, col)
     super()
@@ -13,6 +14,7 @@ class SquareTaken < BThread
       Move move = Move.new(row, col)
       self.bsync({:request => EventSet.none,
                   :wait => move, :block => EventSet.none })
+      self.board[[row,col]].set_enabled false
       self.bsync({ :request => EventSet.none,
                    :wait => EventSet.none, :block => move })
     }

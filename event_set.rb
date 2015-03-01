@@ -1,6 +1,30 @@
 require_relative 'b_event'
 
 module EventSet
+
+  class EventSetClass < BEvent
+
+    attr_reader :events
+
+    def initialize(name, *events)
+      @name = name
+      @events = events
+    end
+
+    def include?(e)
+      @events.include? e
+    end
+
+    def inspect
+      @name
+    end
+
+  end
+
+  def EventSet.event_set(name, *events)
+    EventSetClass.new name, events
+  end
+
   class Any < BEvent
     def include?(e)
       true

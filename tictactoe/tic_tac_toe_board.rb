@@ -60,5 +60,5 @@ class TicTacToeBoard
 
 end
 
-ttt = TicTacToeBoard.new
-ttt.gui.exec
+# ttt = TicTacToeBoard.new
+# ttt.gui.exec

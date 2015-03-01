@@ -3,8 +3,7 @@ require 'continuation'
 
 class BProgram
 
-  attr_accessor :arbiter, :bthreads, :le, :interactive
-  attr_accessor :cont #, nil
+  attr_accessor :arbiter, :bthreads, :le, :interactive, :cont #, nil
 
   def initialize(arbiter)
     @le = :startevent
@@ -67,7 +66,7 @@ class BProgram
   end
 
   def fire(ev)
-    le = ev
+    @le = ev
     bp_loop
   end
 

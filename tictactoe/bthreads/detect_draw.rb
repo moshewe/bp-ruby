@@ -1,5 +1,7 @@
+require_relative '../../b_thread'
+
 class DetectDraw < BThread
-  include(TTTEvents)
+  include TTTEvents
 
   @bodyfunc = lambda { |ev|
     bsync({:request => none,
