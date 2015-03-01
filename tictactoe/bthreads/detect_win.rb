@@ -7,27 +7,27 @@ class DetectWin < BThread
   attr_accessor :win_event, :first, :second, :third
 
   def initialize(winevent, first, second, third)
-
+    BThread.instance_method(:initialize).bind(self).call
+    TTTEvents.instance_method(:initialize).bind(self).call
     @win_event = winevent
     @first = first
     @second = second
     @third = third
+    @bodyfunc = lambda { |e|
+      bsync({:request => @first,
+             :wait => none,
+             :block => none})
+      b sync({:request => @second,
+             :wait => none,
+             :block => none})
+      bsync({:request => @third,
+             :wait => none,
+             :block => none})
+      bsync({:request => @win_event,
+             :wait => none,
+             :block => none})
+    }
   end
-
-  @bodyfunc = lambda { |e|
-    bsync({:request => @first,
-           :wait => none,
-           :block => none})
-    bsync({:request => @second,
-           :wait => none,
-           :block => none})
-    bsync({:request => @third,
-           :wait => none,
-           :block => none})
-    bsync({:request => @win_event,
-           :wait => none,
-           :block => none})
-  }
 
   def DetectWin.gen_all_wins
     # All 6 permutations of three elements
@@ -35,14 +35,14 @@ class DetectWin < BThread
                     [1, 2, 0], [2, 0, 1], [2, 1, 0]]
 
     row_wins = (1..3).flat_map do |row|
-      (permutations.map do |p|
-        DetectWin.new xwin, X.new(row, p[0]),
+      permutations.map do |p|
+        xwin = DetectWin.new TTTEvents.xwin, X.new(row, p[0]),
                       X.new(row, p[1]),
                       X.new(row, p[2])
-      end).concat permutations.map do |p|
-        DetectWin.new owin, O.new(row, p[0]),
+        owin = DetectWin.new TTTEvents.owin, O.new(row, p[0]),
                       O.new(row, p[1]),
                       O.new(row, p[2])
+        return xwin, owin
       end
     end
 

@@ -1,4 +1,4 @@
-require 'bp'
+require_relative '../bp'
 
 class BestFirstSearchArbiter < Arbiter
 

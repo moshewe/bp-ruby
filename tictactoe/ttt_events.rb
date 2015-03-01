@@ -4,6 +4,7 @@ module TTTEvents
   include EventSet
 
   attr_reader :draw, :owin, :xwin, :game_over
+  module_function :draw, :owin, :xwin, :game_over
 
   def initialize
     super

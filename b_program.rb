@@ -24,6 +24,7 @@ class BProgram
     sleep(1)
 
     bthreads.each do |bt|
+      puts "  " + bt.inspect
       req = bt.request.include? @le
       wait = bt.wait.include? @le
       p "%s : %s in req+wait?" % [bt.inspect, @le]

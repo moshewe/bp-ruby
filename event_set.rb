@@ -21,7 +21,7 @@ module EventSet
 
   end
 
-  def EventSet.event_set(name, *events)
+  def event_set(name, *events)
     EventSetClass.new name, events
   end
 
@@ -57,11 +57,11 @@ module EventSet
     end
   end
 
-  def EventSet.any
+  def any
     return Any.instance
   end
 
-  def EventSet.none
+  def none
     return None.instance
   end
 

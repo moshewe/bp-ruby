@@ -3,21 +3,25 @@ require_relative '../../bp'
 class EnforceTurns < BThread
   include(TTTEvents)
 
-  @name = 'EnforceTurns'
-  @current
+  attr_reader :current
 
-  @bodyfunc = lambda{|ev|
-    while(true)
-      @current = :X
-      bsync({:request => none,
-            :wait => xevents,
-            :block => oevents})
-      @current = :O
-      bsync({:request => none,
-             :wait => oevents,
-             :block => xevents})
-    end
-  }
+  def initialize
+    @name = 'EnforceTurns'
+    @current = :X
+    @bodyfunc = lambda { |ev|
+      while (true)
+        @current = :X
+        bsync({:request => none,
+               :wait => xevents,
+               :block => oevents})
+        @current = :O
+        bsync({:request => none,
+               :wait => oevents,
+               :block => xevents})
+      end
+    }
+  end
+
 
   def make_move(row, col)
     if @current == :X

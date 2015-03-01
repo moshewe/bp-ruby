@@ -5,4 +5,8 @@ class BEvent
   def initialize(*name)
     @name = name if !name.nil?
   end
+
+  def inspect
+    name
+  end
 end

@@ -4,17 +4,22 @@ require_relative '../ttt_events'
 class DeclareWinner < BThread
   include TTTEvents
 
-  @name = 'DeclareWinner'
-  @bodyfunc = lambda { |e|
-    e = bsync ({:request => none,
-            :wait => event_set('WinnerDecided', xwin, owin, draw),
-            :block => none})
+  def initialize
+    BThread.instance_method(:initialize).bind(self).call
+    TTTEvents.instance_method(:initialize).bind(self).call
+    @name = 'DeclareWinner'
+  end
 
-    msg = 'X wins' if e == xwin
-    msg = 'Y wins' if e == owin
-    msg = 'Draw' if e == draw
-    ttt.msg msg
-    bsync game_over, none, none
-  }
+  def body(le)
+    eset = event_set('WinnerDecided', xwin, owin, draw)
+    e = bsync ({:request => none,
+                :wait => eset,
+                :block => none})
+    msg = 'X wins', title = 'We have a winner!' if e == xwin
+    msg = 'Y wins', title = 'We have a winner!' if e == owin
+    msg = 'Draw', title = 'It\'s a draw!' if e == draw
+    ttt.msg title, msg
+    bsync ({:request => game_over, :wait => none, :block => none})
+  end
 
 end

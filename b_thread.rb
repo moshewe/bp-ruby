@@ -10,9 +10,13 @@ class BThread
   attr_accessor :program
   attr_accessor :bodyfunc
 
-  def body
-    @bodyfunc.call
+  def body_wrap(le)
+    body le
     @alive = false
+  end
+
+  def body(le)
+    bodyfunc.call le
   end
 
   def initialize(args = {})
@@ -48,7 +52,7 @@ class BThread
 
   def resume(le)
     if @cont.nil?
-      body
+      body_wrap le
     else
       @cont.call le
     end
