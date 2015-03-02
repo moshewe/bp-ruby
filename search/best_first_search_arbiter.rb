@@ -11,7 +11,7 @@ class BestFirstSearchArbiter < Arbiter
   end
 
   def terminal?(node)
-    terminal_func node
+    terminal_func.call node
   end
 
   def search(root)

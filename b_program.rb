@@ -21,17 +21,14 @@ class BProgram
     # we assume the start state is "valid":
     # bthreads are not blocking initial events
     p "bp_loop!"
-    sleep(1)
 
     bthreads.each do |bt|
-      puts "  " + bt.inspect
-      req = bt.request.include? @le
+      # puts "  " + bt.inspect
       wait = bt.wait.include? @le
       p "%s : %s in req+wait?" % [bt.inspect, @le]
-      sleep(1)
+      req = bt.request.include? @le
       if req || wait
         p "resuming %s " % bt.inspect
-        sleep(1)
         resume bt, @le
       end
     end
@@ -40,13 +37,11 @@ class BProgram
       liveness = !bt.alive?
       if (liveness)
         p "deleted bthread " + bt.inspect
-        sleep(1)
       end
       liveness
     end
 
     p "checking if all bthreads finished"
-    sleep(1)
     if bthreads.empty?
       p "all finished!"
       return
@@ -86,19 +81,19 @@ class BProgram
   def legal_events
     requested = []
     bthreads.each do |bt|
-      p "%s asked for %s" %[bt.inspect, bt.request]
-      sleep(1)
-      requested.concat bt.request
+      p "%s asked for %s" %[bt.inspect, bt.request.inspect]
+      requested.concat Array(bt.request)
     end
+    requested.uniq!
 
-    blocked = []
     bthreads.each do |bt|
-      p "%s blocks %s" %[bt.block]
-      sleep(1)
-      blocked.concat bt.block
+      p "%s blocks %s" %[bt.inspect, bt.block.inspect]
+      requested.delete_if { |ev|
+        bt.block.include? ev
+      }
     end
 
-    requested-blocked
+    requested
   end
 
 end

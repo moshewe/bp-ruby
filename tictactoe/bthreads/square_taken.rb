@@ -1,23 +1,26 @@
 require_relative '../../bp'
 
 class SquareTaken < BThread
+  include TTTEvents
 
   @board
   attr_accessor :row, :col, :board
 
   def initialize(row, col)
-    super()
+    BThread.instance_method(:initialize).bind(self).call
+    # TTTEvents.instance_method(:initialize).bind(self).call
     @row = row
     @col = col
     @name = "SquareTaken(#{row},#{col})"
-    @bodyfunc = lambda { |ev|
-      Move move = Move.new(row, col)
-      self.bsync({:request => EventSet.none,
-                  :wait => move, :block => EventSet.none })
-      self.board[[row,col]].set_enabled false
-      self.bsync({ :request => EventSet.none,
-                   :wait => EventSet.none, :block => move })
-    }
+  end
+
+  def body(le)
+    move = Move.new row, col
+    self.bsync({:request => none,
+                :wait => move, :block => none})
+    self.board[[row, col]].set_enabled false
+    self.bsync({:request => none,
+                :wait => none, :block => move})
   end
 
   def self.gen_all_st

@@ -6,22 +6,24 @@ class EnforceTurns < BThread
   attr_reader :current
 
   def initialize
+    BThread.instance_method(:initialize).bind(self).call
+    # TTTEvents.instance_method(:initialize).bind(self).call
     @name = 'EnforceTurns'
     @current = :X
-    @bodyfunc = lambda { |ev|
-      while (true)
-        @current = :X
-        bsync({:request => none,
-               :wait => xevents,
-               :block => oevents})
-        @current = :O
-        bsync({:request => none,
-               :wait => oevents,
-               :block => xevents})
-      end
-    }
   end
 
+  def body(le)
+    while (true)
+      @current = :X
+      bsync({:request => none,
+             :wait => xevents,
+             :block => oevents})
+      @current = :O
+      bsync({:request => none,
+             :wait => oevents,
+             :block => xevents})
+    end
+  end
 
   def make_move(row, col)
     if @current == :X

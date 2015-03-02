@@ -43,7 +43,6 @@ class BThread
       p self.inspect + " bsyncing %s, %s, %s" % [@request.inspect,
                                                  @wait.inspect,
                                                  @block.inspect]
-      sleep(1)
       # call the program's cont
       @program.bsync
     end

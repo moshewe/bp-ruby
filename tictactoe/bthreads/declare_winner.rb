@@ -6,7 +6,7 @@ class DeclareWinner < BThread
 
   def initialize
     BThread.instance_method(:initialize).bind(self).call
-    TTTEvents.instance_method(:initialize).bind(self).call
+    # TTTEvents.instance_method(:initialize).bind(self).call
     @name = 'DeclareWinner'
   end
 
@@ -15,9 +15,14 @@ class DeclareWinner < BThread
     e = bsync ({:request => none,
                 :wait => eset,
                 :block => none})
-    msg = 'X wins', title = 'We have a winner!' if e == xwin
-    msg = 'Y wins', title = 'We have a winner!' if e == owin
-    msg = 'Draw', title = 'It\'s a draw!' if e == draw
+    case e
+      when xwin
+        msg = 'X wins', title = 'We have a winner!'
+      when owin
+        msg = 'Y wins', title = 'We have a winner!'
+      when draw
+        msg = 'Draw', title = 'It\'s a draw!'
+    end
     ttt.msg title, msg
     bsync ({:request => game_over, :wait => none, :block => none})
   end

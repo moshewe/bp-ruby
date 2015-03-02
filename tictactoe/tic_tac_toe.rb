@@ -12,11 +12,11 @@ class TicTacToe
 
   def initialize
     # TTTBThreads.instance_method(:initialize).bind(self).call
-    TTTEvents.instance_method(:initialize).bind(self).call
+    # TTTEvents.instance_method(:initialize).bind(self).call
     @board = Hash.new 0
     terminal = lambda { |bps|
       (bps.program.legal_events.include? xwin) ||
-          (bps.program.legal_events.include owin)
+          (bps.program.legal_events.include? owin)
     }
     h = lambda { |bps|
       case bps.program.le
@@ -30,6 +30,7 @@ class TicTacToe
     }
     arb = BestFirstSearchArbiter.new h, terminal
     @program = BProgram.new arb
+    arb.program = @program
     init_bthreads
     init_gui
   end
@@ -88,6 +89,9 @@ class TicTacToe
     @bthreads = [DeclareWinner.new,
                  DetectDraw.new,
                  @enforcer] + DetectWin.gen_all_wins + @staken
+    @bthreads.each do |bt|
+        bt.program = program
+    end
     program.bthreads = @bthreads
   end
 

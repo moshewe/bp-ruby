@@ -2,8 +2,8 @@ class BEvent
 
   attr_reader :name
 
-  def initialize(*name)
-    @name = name if !name.nil?
+  def initialize(name='BEvent')
+    @name = name
   end
 
   def inspect

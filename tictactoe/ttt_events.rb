@@ -6,24 +6,28 @@ module TTTEvents
   attr_reader :draw, :owin, :xwin, :game_over
   module_function :draw, :owin, :xwin, :game_over
 
-  def initialize
-    super
-    @draw = BEvent.new "Draw"
-    @owin = BEvent.new "OWin"
-    @xwin = BEvent.new "Xwin"
-    @game_over = BEvent.new "Game Over"
-  end
+  @draw = BEvent.new "Draw"
+  @owin = BEvent.new "OWin"
+  @xwin = BEvent.new "XWin"
+  @game_over = BEvent.new "Game Over"
+
+  # def initialize
+  #   super
+  # end
 
   class Move < BEvent
     attr_accessor :x, :y
 
     def initialize(x, y)
+      super "Move(#{x},#{y})"
       @x = x
       @y = y
     end
 
-    def inspect
-      @name
+    def ==(other)
+      (other.is_a? Move) &&
+          move.x == other.x &&
+          move.y == other .y
     end
   end
 
@@ -32,6 +36,12 @@ module TTTEvents
       super x, y
       @name = "X(#{x},#{y})"
     end
+
+    def ==(other)
+      (other.is_a? X) &&
+          move.x == other.x &&
+          move.y == other .y
+    end
   end
 
   class O < Move
@@ -39,39 +49,30 @@ module TTTEvents
       super x, y
       @name = "O(#{x},#{y})"
     end
+
+    def ==(other)
+      (other.is_a? O) &&
+          move.x == other.x &&
+          move.y == other .y
+    end
   end
 
-  class XEvents < BEvent
-    def include?(e)
-      e.is_a? X
-    end
+  class XEvents < EventsOfClass
+    include Singleton
 
-    def inspect
-      "XEvents"
-    end
-
-    @@instance = XEvents.new
-
-    def self.instance
-      return @@instance
+    def initialize
+      super X
     end
 
   end
 
-  class OEvents < BEvent
-    def include?(e)
-      e.is_a? O
+  class OEvents < EventsOfClass
+    include Singleton
+
+    def initialize
+      super O
     end
 
-    def inspect
-      "OEvents"
-    end
-
-    @@instance = OEvents.new
-
-    def self.instance
-      return @@instance
-    end
   end
 
   def xevents
@@ -82,7 +83,4 @@ module TTTEvents
     return OEvents.instance
   end
 
-  def win_event(ev)
-    ev == @owin || ev == @xwin
-  end
 end

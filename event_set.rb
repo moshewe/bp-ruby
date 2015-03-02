@@ -1,4 +1,5 @@
 require_relative 'b_event'
+require 'singleton'
 
 module EventSet
 
@@ -21,48 +22,33 @@ module EventSet
 
   end
 
-  def event_set(name, *events)
-    EventSetClass.new name, events
-  end
-
   class Any < BEvent
+    include Singleton
+
+    def initialize
+      super 'any'
+    end
+
     def include?(e)
       true
     end
 
-    def inspect
-      "any"
-    end
-
-    @@instance = Any.new
-
-    def self.instance
-      return @@instance
-    end
   end
 
   class None < BEvent
+    include Singleton
+
+    def initialize
+      super "none"
+    end
+
     def include?(e)
       false
     end
 
-    def inspect
-      "none"
+    def to_ary
+      []
     end
-
-    @@instance = None.new
-
-    def self.instance
-      return @@instance
-    end
-  end
-
-  def any
-    return Any.instance
-  end
-
-  def none
-    return None.instance
   end
 
   class EventsOfClass < BEvent
@@ -76,12 +62,28 @@ module EventSet
     end
 
     def inspect
-      "events_of_class_#{@klass}"
+      @klass.inspect
     end
 
   end
 
-  def EventSet.event_of_class(klass)
-    return EventsOfClass.new klass
+  def event_set(name, *events)
+    EventSetClass.new name, events
   end
+
+  def any
+    Any.instance
+  end
+
+  def none
+    None.instance
+  end
+
+  def event_of_class(klass)
+    EventsOfClass.new klass
+  end
+
+  module_function :event_set, :any, :none,
+                  :event_of_class
+
 end
