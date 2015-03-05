@@ -3,36 +3,68 @@ require 'continuation'
 
 class BProgram
 
-  attr_accessor :arbiter, :bthreads, :le, :interactive, :cont #, nil
+  attr_accessor :arbiter, :bthreads, :le,
+                :in_pipe, :out_pipe,
+                :cont #, nil
 
   def initialize(arbiter)
     @le = :startevent
     @arbiter = arbiter
     @bthreads = []
+    @in_pipe = []
+    @out_pipe = []
+    @emitq = []
   end
 
   def start
     p "starting program"
-    bp_loop
+    callcc do |cc|
+      @return_cont = cc
+      bp_loop
+    end
   end
 
   def bp_loop
-    #   we resume all bthreads
-    # we assume the start state is "valid":
-    # bthreads are not blocking initial events
-    p "bp_loop!"
-
+    p "BP loop!"
     bthreads.each do |bt|
-      # puts "  " + bt.inspect
-      wait = bt.wait.include? @le
-      p "%s : %s in req+wait?" % [bt.inspect, @le]
-      req = bt.request.include? @le
-      if req || wait
-        p "resuming %s " % bt.inspect
-        resume bt, @le
-      end
+      resume_if_le_in_reqwait(bt)
     end
 
+    delete_finished_bthreads
+
+    p "checking if all bthreads finished"
+    if bthreads.empty?
+      p "all finished!"
+      push_out_pipe
+      @return_cont.call
+    end
+    p "not all finished"
+
+    @le = arbiter.next_event
+    if !@le && !@in_pipe.empty?
+      @in_pipe.shift
+    end
+
+    if (@le)
+      bp_loop
+    else
+      push_out_pipe
+      p "waiting for external event..."
+      @return_cont.call
+    end
+  end
+
+  def resume_if_le_in_reqwait(bt)
+    wait = bt.wait.include? @le
+    p "%s : %s in req+wait?" % [bt.inspect, @le.inspect]
+    req = bt.request.include? @le
+    if req || wait
+      p "resuming %s " % bt.inspect
+      resume bt, @le
+    end
+  end
+
+  def delete_finished_bthreads
     bthreads.delete_if do |bt|
       liveness = !bt.alive?
       if (liveness)
@@ -40,30 +72,31 @@ class BProgram
       end
       liveness
     end
+  end
 
-    p "checking if all bthreads finished"
-    if bthreads.empty?
-      p "all finished!"
-      return
-    end
-    p "not all finished"
-    sleep(1)
-
-    @le = arbiter.next_event
-    if (@le)
-      bp_loop
-    else
-      if @interactive
-        p "need external event!"
-      else
-        p "DEADLOCK!"
-      end
+  def push_out_pipe
+    while !@emitq.empty? do
+      ev = @emitq.shift
+      p "emitting #{ev.inspect}"
+      @out_pipe.push ev
     end
   end
 
   def fire(ev)
-    @le = ev
-    bp_loop
+    if @in_pipe.empty?
+      @le = ev
+      callcc do |cc|
+        @return_cont = cc
+        bp_loop
+      end
+    else
+      @in_pipe.push ev
+    end
+  end
+
+  def emit(ev)
+    p "added #{ev.inspect} to emitq"
+    @emitq.push ev
   end
 
   def resume(bt, le)
@@ -84,8 +117,11 @@ class BProgram
       p "%s asked for %s" %[bt.inspect, bt.request.inspect]
       requested.concat Array(bt.request)
     end
+    if requested.empty?
+      p "nothing was requested"
+      return []
+    end
     requested.uniq!
-
     bthreads.each do |bt|
       p "%s blocks %s" %[bt.inspect, bt.block.inspect]
       requested.delete_if { |ev|

@@ -26,8 +26,8 @@ module TTTEvents
 
     def ==(other)
       (other.is_a? Move) &&
-          move.x == other.x &&
-          move.y == other .y
+          x == other.x &&
+          y == other .y
     end
   end
 
@@ -39,8 +39,8 @@ module TTTEvents
 
     def ==(other)
       (other.is_a? X) &&
-          move.x == other.x &&
-          move.y == other .y
+          x == other.x &&
+          y == other .y
     end
   end
 
@@ -52,8 +52,8 @@ module TTTEvents
 
     def ==(other)
       (other.is_a? O) &&
-          move.x == other.x &&
-          move.y == other .y
+          x == other.x &&
+          y == other .y
     end
   end
 

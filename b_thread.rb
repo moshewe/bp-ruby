@@ -1,6 +1,8 @@
 require 'continuation'
+require_relative 'event_set'
 
 class BThread
+  include EventSet
   attr_accessor :request #, []
   attr_accessor :wait #, []
   attr_accessor :block #, []
@@ -22,7 +24,7 @@ class BThread
   def initialize(args = {})
     @request = [:startevent]
     @wait = [:startevent]
-    @block = []
+    @block = none
     @alive = true
     # puts args
     # if args.is_a? Hash
@@ -35,9 +37,9 @@ class BThread
   end
 
   def bsync(args = {})
-    @request = args[:request]
-    @wait = args[:wait]
-    @block = args[:block]
+    @request = args[:request] || none
+    @wait = args[:wait] || none
+    @block = args[:block] || none
     e = callcc do |cc|
       @cont=cc
       p self.inspect + " bsyncing %s, %s, %s" % [@request.inspect,

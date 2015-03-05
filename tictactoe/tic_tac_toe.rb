@@ -1,6 +1,5 @@
 require 'Qt4'
 require_relative 'bthreads/tttb_threads'
-# require_relative '../search/bp_search'
 Dir['../search/*'].each { |file| require file }
 
 class TicTacToe
@@ -32,6 +31,8 @@ class TicTacToe
     @program = BProgram.new arb
     arb.program = @program
     init_bthreads
+    arb.sim_bthreads = @sim_bthreads
+    @program.start
     init_gui
   end
 
@@ -52,7 +53,7 @@ class TicTacToe
             # board[[row, col]] = enforcer.current
             set_enabled false
             puts "val for (#{row},#{col}) is " +
-                     ttt.enforcer.current.inspect.id2name
+                     ttt.enforcer.current.id2name
             ttt.program.fire ttt.enforcer.make_move(row, col)
           }
         end
@@ -77,20 +78,19 @@ class TicTacToe
     end
 
     gui.set_active_window window
+    gui.exec
   end
 
   def init_bthreads
     @enforcer = EnforceTurns.new
-    @staken = (0..2).map { |row|
-      (0..2).map { |col|
-        SquareTaken.new row, col
-      }
-    }.flatten
+    @staken = SquareTaken.gen_all_st
+    @sim_bthreads = MoveSimulator.gen_all_move_sim @enforcer
     @bthreads = [DeclareWinner.new,
                  DetectDraw.new,
-                 @enforcer] + DetectWin.gen_all_wins + @staken
+                 @enforcer] + DetectWin.gen_all_wins +
+        @staken + @sim_bthreads
     @bthreads.each do |bt|
-        bt.program = program
+      bt.program = program
     end
     program.bthreads = @bthreads
   end
@@ -100,9 +100,7 @@ class TicTacToe
   end
 
   def TicTacToe.start
-    ttt = TicTacToe.new
-    ttt.program.start
-    ttt.gui.exec
+    TicTacToe.new
   end
 end
 
