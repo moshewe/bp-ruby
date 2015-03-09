@@ -40,6 +40,8 @@ class BProgram
     end
     p "not all finished"
 
+    arbiter.next_event
+
     @le = arbiter.next_event
     if !@le && !@in_pipe.empty?
       @in_pipe.shift
@@ -51,6 +53,14 @@ class BProgram
       push_out_pipe
       p "waiting for external event..."
       @return_cont.call
+    end
+  end
+
+  def push_out_pipe
+    while !@emitq.empty? do
+      ev = @emitq.shift
+      p "emitting #{ev.inspect}"
+      @out_pipe.push ev
     end
   end
 
@@ -74,14 +84,6 @@ class BProgram
     end
   end
 
-  def push_out_pipe
-    while !@emitq.empty? do
-      ev = @emitq.shift
-      p "emitting #{ev.inspect}"
-      @out_pipe.push ev
-    end
-  end
-
   def fire(ev)
     if @in_pipe.empty?
       @le = ev
@@ -92,6 +94,12 @@ class BProgram
     else
       @in_pipe.push ev
     end
+  end
+
+  def back_to_caller
+    push_out_pipe
+    p "waiting for external event..."
+    @return_cont.call
   end
 
   def emit(ev)

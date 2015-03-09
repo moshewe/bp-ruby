@@ -1,5 +1,6 @@
 require 'Qt4'
 require_relative 'bthreads/tttb_threads'
+Dir['../arbiter_event_selectors/*'].each { |file| require file }
 Dir['../search/*'].each { |file| require file }
 
 class TicTacToe
@@ -27,11 +28,13 @@ class TicTacToe
           0
       end
     }
-    arb = BestFirstSearchArbiter.new h, terminal
+    # arb.selector = StepAndSetGivenSelector.new arb, arb.selector
+    arb = MinimaxArbiter.new nil, :O, h, terminal
     @program = BProgram.new arb
     arb.program = @program
     init_bthreads
     arb.sim_bthreads = @sim_bthreads
+    arb.enforcer = @enforcer
     @program.start
     init_gui
   end
@@ -43,14 +46,12 @@ class TicTacToe
       connect(SIGNAL :clicked) { Qt::Application.instance.quit }
     end
 
-    # ugly, ugly hack to go around block context
     ttt = self
     butts = (0..2).map { |row|
       (0..2).map { |col|
         Qt::PushButton.new do
           connect(SIGNAL :clicked) {
             setText ttt.enforcer.current.id2name
-            # board[[row, col]] = enforcer.current
             set_enabled false
             puts "val for (#{row},#{col}) is " +
                      ttt.enforcer.current.id2name
