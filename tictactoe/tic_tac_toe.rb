@@ -15,8 +15,8 @@ class TicTacToe
     # TTTEvents.instance_method(:initialize).bind(self).call
     @board = Hash.new 0
     terminal = lambda { |bps|
-      (bps.program.le == xwin) ||
-          (bps.program.le == owin)
+      (bps.program.le == TTTEvents.xwin) ||
+          (bps.program.le == TTTEvents.owin)
     }
     h = lambda { |bps|
       case bps.program.le

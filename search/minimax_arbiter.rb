@@ -20,28 +20,28 @@ class MinimaxArbiter < AdversarialSearchArbiter
   end
 
   def min(node)
-    return h node if terminal? node
+    return h.call(node) if terminal? node
     val = Float::INFINITY
     legals = node.program.legal_events
     # puts "legal events are #{legals.inspect}"
     legals.each { |ev|
       puts "MINIMAX EXPLORING #{ev.inspect}"
-      val = [val,
-             max(node.apply ev)].min
+      maxval = max(node.apply ev)
+      val = [val, maxval].min
       finished_exploring node, ev
     }
     val
   end
 
   def max(node)
-    return h node if terminal? node
+    return h.call(node) if terminal? node
     val = -Float::INFINITY
     legals = node.program.legal_events
     # puts "legal events are #{legals.inspect}"
     legals.each { |ev|
       puts "MINIMAX EXPLORING #{ev.inspect}"
-      val = [val,
-             min(node.apply ev)].max
+      minval = min(node.apply ev)
+      val = [val, minval].max
       finished_exploring node, ev
     }
     val
