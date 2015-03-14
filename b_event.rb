@@ -15,6 +15,6 @@ class BEvent
   end
 
   def ==(ev)
-    self.name.eql? ev.name
+    @name.eql? ev.name
   end
 end

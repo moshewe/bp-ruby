@@ -12,31 +12,45 @@ class MoveSimulator < BThread
     @row = row
     @col = col
     @moved = false
+    @sandbox = false
   end
 
   def body(le)
     while true
-      e = bsync
-      if e == @req_move
-        puts @name + "'s move triggered! Won't request ever again!"
-        @moved = true
-      end
+      bsync(make_bsync_hash)
+      # if e.is_a?(Move) && e.x == @row && e.y == @col
+      #   puts @name + "'s move triggered! Won't request ever again!"
+      #   @moved = true
+      # end
+    end
+  end
+
+  def make_bsync_hash
+    if @sandbox
+      move = enforcer.make_move(row, col)
+      # puts @name + " is requesting " + move.inspect
+      {:request => move, :wait => EventsOfClass.new(Move)}
+    else
+      {}
     end
   end
 
   def sandbox_on
     puts @name + "turned sandbox ON! "
-    if !@moved
-      @req_move = enforcer.make_move(row, col)
-      @request = @req_move
-      puts @name + " changed request to " + @request.inspect
-    end
+    # if !@moved
+    # @req_move = enforcer.make_move(row, col)
+    @request = enforcer.make_move(row, col)
+    @wait = EventsOfClass.new Move
+    puts @name + " changed request to " + @request.inspect
+    # end
+    @sandbox = true
   end
 
   def sandbox_off
     puts "turned sandbox OFF! " + @name
     @request = none
     puts @name + " changed request to " + @request.inspect
+    @sandbox = false
   end
 end
 

@@ -7,22 +7,32 @@ class BPState
     @program = program
     @actions = []
     save_state(program)
+    puts "BPState created!"
   end
 
   def save_state(program)
-    puts "saving state"
-    @bp_state = {}
-    program.instance_variables.each do |var|
-      @bp_state[var] = instance_variable_get(var)
-    end
+    save_prog_state(program)
     @bt_states = {}
     program.bthreads.each { |bth|
-      bts = {}
-      bth.instance_variables.each do |var|
-        bts[var] = instance_variable_get(var)
-      end
-      @bt_states[bth] = bts
+      @bt_states[bth] = save_bt_state(bth)
     }
+  end
+
+  def save_bt_state(bth)
+    bts = {}
+    bth.instance_variables.each do |var|
+      val = instance_variable_get(var)
+      bts[var] = val.clone if val
+    end
+    bts
+  end
+
+  def save_prog_state(program)
+    @bp_state = {}
+    program.instance_variables.each do |var|
+      val = instance_variable_get(var)
+      @bp_state[var] = val.clone if val
+    end
   end
 
   def expand
@@ -35,12 +45,10 @@ class BPState
     program.fire(action)
     result = BPState.new program
     result.actions.push action
-    restore_state
     result
   end
 
   def restore_state
-    puts "restoring state... last action: " + actions.last.inspect
     @bp_state.each do |var,val|
       program.instance_variable_set var, val
     end

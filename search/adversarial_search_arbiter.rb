@@ -16,6 +16,8 @@ class AdversarialSearchArbiter < SearchArbiter
     puts "Current Player: " + @enforcer.current.id2name
     if @enforcer.current == agent_player
       puts "AGENT'S TURN - WILL SEARCH FOR EVENT"
+    elsif @sandbox
+      puts "IN SANDBOX - SIMULATING PLAYER"
     else
       puts "NOT AGENT'S TURN - ASKING FOR EXTERNAL (NO SANDBOX)"
       super.ask_for_external_no_sandbox

@@ -4,8 +4,8 @@ require 'continuation'
 class BProgram
 
   attr_accessor :arbiter, :bthreads, :le,
-                :in_pipe, :out_pipe,
-                :cont #, nil
+                :in_pipe, :out_pipe, :emitq,
+                :cont, :return_cont
 
   def initialize(arbiter)
     @le = :startevent
@@ -26,12 +26,8 @@ class BProgram
 
   def bp_loop
     p "BP loop!"
-    bthreads.each do |bt|
-      resume_if_le_in_reqwait(bt)
-    end
-
+    resume_bthreads
     delete_finished_bthreads
-
     p "checking if all bthreads finished"
     if bthreads.empty?
       p "all finished!"
@@ -39,20 +35,29 @@ class BProgram
       @return_cont.call
     end
     p "not all finished"
-
     arbiter.next_event
-
     @le = arbiter.next_event
     if !@le && !@in_pipe.empty?
       @in_pipe.shift
     end
-
     if (@le)
       bp_loop
     else
       push_out_pipe
       p "waiting for external event..."
       @return_cont.call
+    end
+  end
+
+  def resume_bthreads
+    bthreads.each do |bt|
+      wait = bt.wait.include? @le
+      # p "%s : %s in req+wait?" % [bt.inspect, @le.inspect]
+      req = bt.request.include? @le
+      if req || wait
+        # p "resuming %s " % bt.inspect
+        resume bt, @le
+      end
     end
   end
 
@@ -64,15 +69,6 @@ class BProgram
     end
   end
 
-  def resume_if_le_in_reqwait(bt)
-    wait = bt.wait.include? @le
-    p "%s : %s in req+wait?" % [bt.inspect, @le.inspect]
-    req = bt.request.include? @le
-    if req || wait
-      p "resuming %s " % bt.inspect
-      resume bt, @le
-    end
-  end
 
   def delete_finished_bthreads
     bthreads.delete_if do |bt|
@@ -122,7 +118,7 @@ class BProgram
   def legal_events
     requested = []
     bthreads.each do |bt|
-      p "%s asked for %s" %[bt.inspect, bt.request.inspect]
+      # p "%s asked for %s" %[bt.inspect, bt.request.inspect]
       requested.concat Array(bt.request)
     end
     if requested.empty?
@@ -131,12 +127,12 @@ class BProgram
     end
     requested.uniq!
     bthreads.each do |bt|
-      p "%s blocks %s" %[bt.inspect, bt.block.inspect]
       requested.delete_if { |ev|
-        bt.block.include? ev
+        del = bt.block.include? ev
+        # p "%s blocks %s" %[bt.inspect, ev.inspect] if del
+        del
       }
     end
-
     requested
   end
 

@@ -15,13 +15,13 @@ class Arbiter
       ask_for_external
     end
     ev = select_event legal
-    puts "event selected is #{ev}"
+    puts "event selected is #{ev.inspect}"
     if !ev && !program.in_pipe.empty?
       ev = program.in_pipe.shift
     end
     if ev
       program.le = ev
-      bp_loop
+      program.bp_loop
     else
       program.back_to_caller
     end

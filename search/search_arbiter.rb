@@ -3,23 +3,41 @@ require_relative '../arbiter_event_selectors/default_event_selector'
 
 class SearchArbiter < Arbiter
 
-  attr_accessor :h, :sandbox, :terminal_func, :sim_bthreads
+  attr_accessor :h, :sandbox, :terminal_func, :sim_bthreads,
+                :selector
 
-  class SearchArbiterEventSelector < DefaultEventSelector
+  class StartSearchSelector < DefaultEventSelector
+
+    def initialize(arbiter)
+      super
+      @wiss = WhileInSearchSelector.new @arbiter
+    end
+
     def select_event(legal)
       if arbiter.sandbox
         puts "IN SANDBOX - NO EVENT SELECTION"
+        gets
       else
         @arbiter.sandbox_on
-        @arbiter.search(BPState.new @arbiter.program)
+        @arbiter.program.arbiter.selector = @wiss
+        ans = @arbiter.search(BPState.new @arbiter.program)
+        @arbiter.program.arbiter.selector = self
         @arbiter.sandbox_off
+        ans
       end
+    end
+  end
+
+  class WhileInSearchSelector < DefaultEventSelector
+    def select_event(legal)
+      puts "IN SEARCH, NOT SELECTING EVENTS"
+      nil
     end
   end
 
   def initialize(h, terminal_func = nil)
     @sim_bthreads = nil
-    @selector = SearchArbiterEventSelector.new self
+    @selector = StartSearchSelector.new self
     @sandbox = false
     if h.is_a? Hash
       @h = lambda { |ev| h[ev] }
@@ -57,9 +75,10 @@ class SearchArbiter < Arbiter
   end
 
   def sandbox_on
-    p "=== ENTERING SANDBOX MODE ==="
+    puts "=== ENTERING SANDBOX MODE ==="
     @sandbox = true
     @sim_bthreads.each { |sbt| sbt.sandbox_on }
+    puts "=== ALL SIM-BTHREADS IN SANDBOX MODE ==="
     @backup_in_pipe = @in_pipe
     @backup_out_pipe = @out_pipe
     @in_pipe = []
@@ -71,7 +90,7 @@ class SearchArbiter < Arbiter
     @sim_bthreads.each { |sbt| sbt.sandbox_off }
     @in_pipe = @backup_in_pipe
     @out_pipe = @backup_out_pipe
-    p "=== EXITED SANDBOX MODE ==="
+    puts "=== EXITED SANDBOX MODE ==="
   end
 
   def search(node)
