@@ -20,11 +20,14 @@ class TicTacToe
     }
     h = lambda { |bps|
       case bps.program.le
-        when xwin
+        when TTTEvents.xwin
+          puts bps.inspect + "'s val is -1"
           -1
-        when owin
+        when TTTEvents.owin
+          puts bps.inspect + "'s val is 1"
           1
         else
+          puts bps.inspect + "'s val is 0"
           0
       end
     }

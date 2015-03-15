@@ -11,7 +11,7 @@ class DetectDraw < BThread
   end
 
   def body(le)
-    8.times do |i|
+    9.times do |i|
       bsync({:request => none,
              :wait => event_of_class(Move),
              :block => none})

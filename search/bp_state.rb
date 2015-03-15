@@ -21,8 +21,8 @@ class BPState
   def save_bt_state(bth)
     bts = {}
     bth.instance_variables.each do |var|
-      val = instance_variable_get(var)
-      bts[var] = val.clone if val
+      val = bth.instance_variable_get(var)
+      bts[var] = val.clone if defined? val.clone
     end
     bts
   end
@@ -30,8 +30,8 @@ class BPState
   def save_prog_state(program)
     @bp_state = {}
     program.instance_variables.each do |var|
-      val = instance_variable_get(var)
-      @bp_state[var] = val.clone if val
+      val = program.instance_variable_get(var)
+      @bp_state[var] = val if defined? val.clone
     end
   end
 
@@ -44,6 +44,7 @@ class BPState
   def apply(action)
     program.fire(action)
     result = BPState.new program
+    result.actions = Array.new actions
     result.actions.push action
     result
   end
@@ -57,6 +58,11 @@ class BPState
         bth.instance_variable_set varname, varval
       end
     end
+    puts "restored state to " + inspect
+  end
+
+  def inspect
+    actions.inspect
   end
 
 end
