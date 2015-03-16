@@ -3,36 +3,63 @@ class BPState
 
   attr_accessor :bt_states, :program, :actions
 
+  class BTState
+
+    def initialize(bt)
+      @bt = bt
+      @request = bt.request
+      @wait = bt.wait
+      @block = bt.block
+      @cont = bt.cont
+      @name = bt.name
+      @program = bt.program
+      @bodyfunc = bt.bodyfunc
+      @alive = bt.alive
+    end
+
+    def restore
+      @bt.request = @request
+      @bt.wait = @wait
+      @bt.block = @block
+      @bt.cont = @cont
+      @bt.name = @name
+      @bt.program = @program
+      @bt.bodyfunc = @bodyfunc
+      @bt.alive = @alive
+    end
+
+  end
+
   def initialize(program)
     @program = program
     @actions = []
-    save_state(program)
-    puts "BPState created!"
-  end
-
-  def save_state(program)
-    save_prog_state(program)
-    @bt_states = {}
-    program.bthreads.each { |bth|
-      @bt_states[bth] = save_bt_state(bth)
-    }
-  end
-
-  def save_bt_state(bth)
-    bts = {}
-    bth.instance_variables.each do |var|
-      val = bth.instance_variable_get(var)
-      bts[var] = val.clone if defined? val.clone
+    save_prog_state
+    @bt_states = program.bthreads.map do |bt|
+      BTState.new bt
     end
-    bts
+    # puts "BPState created!"
   end
 
-  def save_prog_state(program)
-    @bp_state = {}
-    program.instance_variables.each do |var|
-      val = program.instance_variable_get(var)
-      @bp_state[var] = val if defined? val.clone
-    end
+  def save_prog_state
+    @arbiter = program.arbiter
+    @bthreads = Array.new program.bthreads
+    @le = program.le
+    @in_pipe = program.in_pipe
+    @out_pipe = program.out_pipe
+    @emitq = program.emitq
+    @cont = program.cont
+    @return_cont = program.return_cont
+  end
+
+  def restore_prog_state
+    program.arbiter = @arbiter
+    program.bthreads = @bthreads
+    program.le = @le
+    program.in_pipe = @in_pipe
+    program.out_pipe = @out_pipe
+    program.emitq = @emitq
+    program.cont = @cont
+    program.return_cont = @return_cont
   end
 
   def expand
@@ -49,20 +76,15 @@ class BPState
     result
   end
 
-  def restore_state
-    @bp_state.each do |var,val|
-      program.instance_variable_set var, val
+  def restore
+    restore_prog_state
+    @bt_states.each do |bts|
+      bts.restore
     end
-    bt_states.each do |bth, bts|
-      bts.each do |varname, varval|
-        bth.instance_variable_set varname, varval
-      end
-    end
-    puts "restored state to " + inspect
   end
 
   def inspect
-    actions.inspect
+    "BPState" + actions.inspect
   end
 
 end

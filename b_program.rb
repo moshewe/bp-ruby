@@ -28,23 +28,23 @@ class BProgram
     p "BP loop!"
     resume_bthreads
     delete_finished_bthreads
-    p "checking if all bthreads finished"
+    # p "checking if all bthreads finished"
     if bthreads.empty?
       p "all finished!"
       push_out_pipe
       @return_cont.call
     end
-    p "not all finished"
+    # p "not all finished"
     arbiter.next_event
     @le = arbiter.next_event
     if !@le && !@in_pipe.empty?
-      @in_pipe.shift
+      @le = @in_pipe.shift
     end
     if (@le)
       bp_loop
     else
       push_out_pipe
-      p "waiting for external event..."
+      # p "waiting for external event..."
       @return_cont.call
     end
   end
@@ -94,7 +94,7 @@ class BProgram
 
   def back_to_caller
     push_out_pipe
-    p "waiting for external event..."
+    # p "returned to caller..."
     @return_cont.call
   end
 
@@ -122,7 +122,7 @@ class BProgram
       requested.concat Array(bt.request)
     end
     if requested.empty?
-      p "nothing was requested"
+      # p "nothing was requested"
       return []
     end
     requested.uniq!
@@ -133,7 +133,9 @@ class BProgram
         del
       }
     end
-    requested
+    # added in_pipe drawing to implicitly trigger the external events
+    # without the need to artificially check for them
+    requested || @in_pipe.shift
   end
 
 end

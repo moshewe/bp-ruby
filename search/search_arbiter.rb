@@ -14,17 +14,12 @@ class SearchArbiter < Arbiter
     end
 
     def select_event(legal)
-      if arbiter.sandbox
-        puts "IN SANDBOX - NO EVENT SELECTION"
-        gets
-      else
-        @arbiter.sandbox_on
-        @arbiter.program.arbiter.selector = @wiss
-        ans = @arbiter.search(BPState.new @arbiter.program)
-        @arbiter.program.arbiter.selector = self
-        @arbiter.sandbox_off
-        ans
-      end
+      @arbiter.sandbox_on
+      @arbiter.program.arbiter.selector = @wiss
+      ans = @arbiter.search(BPState.new @arbiter.program)
+      @arbiter.program.arbiter.selector = self
+      @arbiter.sandbox_off
+      ans
     end
   end
 
@@ -60,36 +55,22 @@ class SearchArbiter < Arbiter
     terminal_func.call node
   end
 
-  alias_method :super_ask_for_external, :ask_for_external
-
-  def ask_for_external
-    if @sandbox
-      puts "IN SANDBOX - dropping request for external event..."
-    else
-      ask_for_external_no_sandbox
-    end
-  end
-
-  def ask_for_external_no_sandbox
-    super_ask_for_external
-  end
-
   def sandbox_on
     puts "=== ENTERING SANDBOX MODE ==="
     @sandbox = true
     @sim_bthreads.each { |sbt| sbt.sandbox_on }
     puts "=== ALL SIM-BTHREADS IN SANDBOX MODE ==="
-    @backup_in_pipe = @in_pipe
-    @backup_out_pipe = @out_pipe
-    @in_pipe = []
-    @out_pipe = []
+    # @backup_in_pipe = @in_pipe
+    # @backup_out_pipe = @out_pipe
+    # @in_pipe = []
+    # @out_pipe = []
   end
 
   def sandbox_off
     @sandbox = false
     @sim_bthreads.each { |sbt| sbt.sandbox_off }
-    @in_pipe = @backup_in_pipe
-    @out_pipe = @backup_out_pipe
+    # @in_pipe = @backup_in_pipe
+    # @out_pipe = @backup_out_pipe
     puts "=== EXITED SANDBOX MODE ==="
   end
 
@@ -97,4 +78,9 @@ class SearchArbiter < Arbiter
     puts "PLEASE IMPLEMENT SEARCH METHOD"
   end
 
+  def next_event
+    return super if !@sandbox
+    puts "END BP loop - IN SEARCH, NOT SELECTING EVENT"
+    program.back_to_caller
+  end
 end

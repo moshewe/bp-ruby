@@ -57,6 +57,10 @@ module EventSet
       @klass = klass
     end
 
+    def ==(other)
+      other.is_a? @klass
+    end
+
     def include?(e)
       e.is_a? @klass
     end

@@ -10,7 +10,7 @@ class BThread
   #set-able in constructor
   attr_accessor :name
   attr_accessor :program
-  attr_accessor :bodyfunc
+  attr_accessor :bodyfunc, :alive
 
   def body_wrap(le)
     body le

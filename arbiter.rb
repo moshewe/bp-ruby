@@ -11,14 +11,14 @@ class Arbiter
     p "arbiting next event"
     legal = program.legal_events
     puts "legal events: #{legal}"
-    if legal.empty?
-      ask_for_external
-    end
+    # if legal.empty?
+    #   ask_for_external
+    # end
     ev = select_event legal
-    puts "event selected is #{ev.inspect}"
-    if !ev && !program.in_pipe.empty?
-      ev = program.in_pipe.shift
-    end
+    # puts "event selected is #{ev.inspect}"
+    # if !ev && !program.in_pipe.empty?
+    #   ev = program.in_pipe.shift
+    # end
     if ev
       program.le = ev
       program.bp_loop

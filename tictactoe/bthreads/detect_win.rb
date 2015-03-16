@@ -28,7 +28,8 @@ class DetectWin < BThread
            :block => none})
     bsync({:request => @win_event,
            :wait => none,
-           :block => none})
+           :block => [event_of_class(Move),
+                      TTTEvents.draw]})
   end
 
   def DetectWin.gen_all_wins

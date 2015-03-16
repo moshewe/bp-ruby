@@ -18,6 +18,6 @@ class DetectDraw < BThread
     end
     bsync({:request => draw,
            :wait => none,
-           :block => none})
+           :block => event_of_class(Move)})
   end
 end

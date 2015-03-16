@@ -15,7 +15,7 @@ class MinimaxArbiter < AdversarialSearchArbiter
         val = ev_val
       end
       puts "MINIMAX FINISHED EXPLORING #{ev.inspect}"
-      node.restore_state
+      node.restore
     end
     action
   end
@@ -30,7 +30,7 @@ class MinimaxArbiter < AdversarialSearchArbiter
       maxval = max(node.apply ev)
       val = [val, maxval].min
       puts "MINIMAX FINISHED EXPLORING #{ev.inspect}"
-      node.restore_state
+      node.restore
     }
     val
   end
@@ -45,7 +45,7 @@ class MinimaxArbiter < AdversarialSearchArbiter
       minval = min(node.apply ev)
       val = [val, minval].max
       puts "MINIMAX FINISHED EXPLORING #{ev.inspect}"
-      node.restore_state
+      node.restore
     }
     val
   end
