@@ -1,7 +1,7 @@
 require_relative 'b_event'
 require 'singleton'
 
-module EventSet
+module BaseEvents
 
   class EventSetClass < BEvent
 
@@ -71,6 +71,17 @@ module EventSet
 
   end
 
+  class CopyContEvent
+
+    def initialize(return_cont)
+      @return = return_cont
+    end
+
+    def call(arg)
+      @return.call arg
+    end
+  end
+
   def event_set(name, *events)
     EventSetClass.new name, events
   end
@@ -87,7 +98,11 @@ module EventSet
     EventsOfClass.new klass
   end
 
+  def copy_cont_event(return_cont)
+    CopyContEvent.new return_cont
+  end
+
   module_function :event_set, :any, :none,
-                  :event_of_class
+                  :event_of_class, :copy_cont_event
 
 end

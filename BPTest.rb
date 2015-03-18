@@ -77,12 +77,12 @@ class BpTest < Test::Unit::TestCase
                                       p 'alternator blocking 2'
                                       sleep(1)
                                       btAlternator.bsync(:request => [],
-                                                         :wait => EventSet.any,
+                                                         :wait => BaseEvents.any,
                                                          :block => [:e2])
                                       p 'alternator blocking 1'
                                       sleep(1)
                                       btAlternator.bsync(:request => [],
-                                                         :wait => EventSet.any,
+                                                         :wait => BaseEvents.any,
                                                          :block => [:e1])
                                     end
                                     p "alternator done!"

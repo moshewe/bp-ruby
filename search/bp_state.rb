@@ -1,16 +1,22 @@
+require_relative '../base_events'
+
 # AKA BPState
 class BPState
 
   attr_accessor :bt_states, :program, :actions
 
   class BTState
+    include BaseEvents
 
     def initialize(bt)
       @bt = bt
       @request = bt.request
       @wait = bt.wait
       @block = bt.block
-      @cont = bt.cont
+      @cont = callcc do |cc|
+        cce = copy_cont_event cc
+        bt.resume cce
+      end
       @name = bt.name
       @program = bt.program
       @bodyfunc = bt.bodyfunc
@@ -63,7 +69,7 @@ class BPState
   end
 
   def expand
-    program.legal_events.map {|ev|
+    program.legal_events.map { |ev|
       apply ev
     }
   end

@@ -1,7 +1,7 @@
-require_relative '../event_set'
+require_relative '../base_events'
 
 module TTTEvents
-  include EventSet
+  include BaseEvents
 
   attr_reader :draw, :owin, :xwin, :game_over
   module_function :draw, :owin, :xwin, :game_over

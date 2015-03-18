@@ -1,8 +1,8 @@
 require 'continuation'
-require_relative 'event_set'
+require_relative 'base_events'
 
 class BThread
-  include EventSet
+  include BaseEvents
   attr_accessor :request #, []
   attr_accessor :wait #, []
   attr_accessor :block #, []
@@ -47,6 +47,12 @@ class BThread
                                                  @block.inspect]
       # call the program's cont
       @program.bsync
+    end
+    if e.is_a? CopyContEvent
+      e = callcc do |cc|
+        e.call cc
+      end
+      @cont.call e
     end
     e # program calls cont with triggered event
   end

@@ -30,6 +30,7 @@ class DetectWin < BThread
            :wait => none,
            :block => [event_of_class(Move),
                       TTTEvents.draw]})
+    program.emit @win_event
   end
 
   def DetectWin.gen_all_wins

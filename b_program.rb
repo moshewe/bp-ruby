@@ -72,11 +72,10 @@ class BProgram
 
   def delete_finished_bthreads
     bthreads.delete_if do |bt|
-      liveness = !bt.alive?
-      if (liveness)
+      if (!bt.alive?)
         p "deleted bthread " + bt.inspect
       end
-      liveness
+      !bt.alive?
     end
   end
 

@@ -2,7 +2,7 @@ require_relative 'b_thread'
 require_relative 'b_program'
 require_relative 'b_event'
 require_relative 'arbiter'
-require_relative 'event_set'
+require_relative 'base_events'
 
 module BP
 

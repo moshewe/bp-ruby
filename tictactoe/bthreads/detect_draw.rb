@@ -19,5 +19,6 @@ class DetectDraw < BThread
     bsync({:request => draw,
            :wait => none,
            :block => event_of_class(Move)})
+    program.emit draw
   end
 end
