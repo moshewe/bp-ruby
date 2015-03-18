@@ -9,7 +9,8 @@ class MinimaxArbiter < AdversarialSearchArbiter
     # puts "legal events are #{legals.inspect}"
     legals.each do |ev|
       puts "MINIMAX EXPLORING #{ev.inspect}"
-      ev_val = min(node.apply ev)
+      child = node.apply ev
+      ev_val = min(child)
       if val < ev_val
         action = ev
         val = ev_val
@@ -27,7 +28,8 @@ class MinimaxArbiter < AdversarialSearchArbiter
     # puts "legal events are #{legals.inspect}"
     legals.each { |ev|
       puts "MINIMAX EXPLORING #{ev.inspect}"
-      maxval = max(node.apply ev)
+      child = node.apply ev
+      maxval = max(child)
       val = [val, maxval].min
       puts "MINIMAX FINISHED EXPLORING #{ev.inspect}"
       node.restore
@@ -42,7 +44,8 @@ class MinimaxArbiter < AdversarialSearchArbiter
     # puts "legal events are #{legals.inspect}"
     legals.each { |ev|
       puts "MINIMAX EXPLORING #{ev.inspect}"
-      minval = min(node.apply ev)
+      child = node.apply ev
+      minval = min(child)
       val = [val, minval].max
       puts "MINIMAX FINISHED EXPLORING #{ev.inspect}"
       node.restore

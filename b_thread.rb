@@ -48,13 +48,18 @@ class BThread
       # call the program's cont
       @program.bsync
     end
+    loop_copy_return_otherwise e
+    # program calls cont with triggered event
+  end
+
+  def loop_copy_return_otherwise(e)
     if e.is_a? CopyContEvent
       e = callcc do |cc|
         e.call cc
       end
-      @cont.call e
+      return loop_copy_return_otherwise e
     end
-    e # program calls cont with triggered event
+    e
   end
 
   def resume(le)

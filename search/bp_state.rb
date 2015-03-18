@@ -68,12 +68,6 @@ class BPState
     program.return_cont = @return_cont
   end
 
-  def expand
-    program.legal_events.map { |ev|
-      apply ev
-    }
-  end
-
   def apply(action)
     program.fire(action)
     result = BPState.new program
