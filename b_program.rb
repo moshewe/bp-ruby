@@ -50,6 +50,7 @@ class BProgram
   end
 
   def resume_bthreads
+    puts "#of bthreads: #{bthreads.length}"
     bthreads.each do |bt|
       wait = bt.wait.include? @le
       # p "%s : %s in req+wait?" % [bt.inspect, @le.inspect]
