@@ -42,9 +42,9 @@ class BThread
     @block = args[:block] || none
     e = callcc do |cc|
       @cont=cc
-      p self.inspect + " bsyncing %s, %s, %s" % [@request.inspect,
-                                                 @wait.inspect,
-                                                 @block.inspect]
+      # p self.inspect + " bsyncing %s, %s, %s" % [@request.inspect,
+      #                                            @wait.inspect,
+      #                                            @block.inspect]
       # call the program's cont
       @program.bsync
     end

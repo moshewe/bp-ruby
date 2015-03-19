@@ -49,8 +49,9 @@ class BPState
   def save_prog_state
     @arbiter = program.arbiter
     @bthreads = program.bthreads
-    program.bthreads = Array.new @bthreads #weird bthread deletiong bug
-    puts "saving #{@bthreads.length} bthreads"
+    #weird bthread deletiong bug
+    program.bthreads = Array.new @bthreads
+    # puts "saving #{@bthreads.length} bthreads"
     @le = program.le
     @in_pipe = program.in_pipe
     @out_pipe = program.out_pipe
@@ -61,7 +62,7 @@ class BPState
 
   def restore_prog_state
     program.arbiter = @arbiter
-    puts "restoring #{@bthreads.length}"
+    # puts "restoring #{@bthreads.length}"
     # if @bthreds.length == 116
     #   puts 'WTF'
     # end

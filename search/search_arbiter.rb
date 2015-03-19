@@ -80,7 +80,7 @@ class SearchArbiter < Arbiter
 
   def next_event
     return super if !@sandbox
-    puts "END BP loop - IN SEARCH, NOT SELECTING EVENT"
+    # puts "END BP loop - IN SEARCH, NOT SELECTING EVENT"
     program.back_to_caller
   end
 end

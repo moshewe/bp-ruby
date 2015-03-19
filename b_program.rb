@@ -25,7 +25,7 @@ class BProgram
   end
 
   def bp_loop
-    p "BP loop!"
+    # p "BP loop!"
     resume_bthreads
     delete_finished_bthreads
     # p "checking if all bthreads finished"
@@ -50,7 +50,7 @@ class BProgram
   end
 
   def resume_bthreads
-    puts "#of bthreads: #{bthreads.length}"
+    # puts "#of bthreads: #{bthreads.length}"
     bthreads.each do |bt|
       wait = bt.wait.include? @le
       # p "%s : %s in req+wait?" % [bt.inspect, @le.inspect]
@@ -65,7 +65,7 @@ class BProgram
   def push_out_pipe
     while !@emitq.empty? do
       ev = @emitq.shift
-      p "emitting #{ev.inspect}"
+      # p "emitting #{ev.inspect}"
       @out_pipe.push ev
     end
   end
@@ -74,7 +74,7 @@ class BProgram
   def delete_finished_bthreads
     bthreads.delete_if do |bt|
       if (!bt.alive?)
-        p "deleted bthread " + bt.inspect
+        # p "deleted bthread " + bt.inspect
       end
       !bt.alive?
     end
@@ -99,7 +99,7 @@ class BProgram
   end
 
   def emit(ev)
-    p "added #{ev.inspect} to emitq"
+    # p "added #{ev.inspect} to emitq"
     @emitq.push ev
   end
 

@@ -13,14 +13,14 @@ class AdversarialSearchArbiter < SearchArbiter
   end
 
   def select_event(legal)
-    puts "Current Player: " + @enforcer.current.id2name
+    # puts "Current Player: " + @enforcer.current.id2name
     if @enforcer.current == agent_player
-      puts "AGENT'S TURN - WILL SEARCH FOR EVENT"
+      # puts "AGENT'S TURN - WILL SEARCH FOR EVENT"
       super legal
     elsif @sandbox
-      puts "IN SANDBOX - SIMULATING PLAYER"
+      # puts "IN SANDBOX - SIMULATING PLAYER"
     else
-      puts "NOT AGENT'S TURN - ASKING FOR EXTERNAL (NO SANDBOX)"
+      # puts "NOT AGENT'S TURN - ASKING FOR EXTERNAL (NO SANDBOX)"
       ask_for_external
     end
   end
