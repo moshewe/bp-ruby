@@ -9,7 +9,7 @@ class MinimaxArbiter < AdversarialSearchArbiter
     legals = node.program.legal_events
     # puts "legal events are #{legals.inspect}"
     legals.each do |ev|
-      # puts "MINIMAX EXPLORING #{ev.inspect} at depth=#{@depth}"
+      puts "MINIMAX EXPLORING #{ev.inspect} at depth=#{@depth}"
       child = node.apply ev
       ev_val = min(child)
       @depth-=1
@@ -18,7 +18,7 @@ class MinimaxArbiter < AdversarialSearchArbiter
         val = ev_val
       end
       node.restore
-      # puts "MINIMAX FINISHED EXPLORING #{ev.inspect} at depth=#{@depth}"
+      puts "MINIMAX FINISHED EXPLORING #{ev.inspect} at depth=#{@depth}"
     end
     action
   end
@@ -30,7 +30,7 @@ class MinimaxArbiter < AdversarialSearchArbiter
     legals = node.program.legal_events
     # puts "legal events are #{legals.inspect}"
     legals.each { |ev|
-      # puts "MINIMAX EXPLORING #{ev.inspect} at depth=#{@depth}"
+      puts "MINIMAX EXPLORING #{ev.inspect} at depth=#{@depth}"
       # if @depth == 1 || @depth ==3
       #   puts 'moomoo'
       # end
@@ -39,7 +39,8 @@ class MinimaxArbiter < AdversarialSearchArbiter
       @depth-=1
       val = [val, maxval].min
       node.restore
-      # puts "MINIMAX FINISHED EXPLORING #{ev.inspect} at depth=#{@depth}"
+      puts "MINIMAX FINISHED EXPLORING #{ev.inspect} at depth=#{@depth}"
+      # GC.start
     }
     val
   end
@@ -51,7 +52,7 @@ class MinimaxArbiter < AdversarialSearchArbiter
     legals = node.program.legal_events
     # puts "legal events are #{legals.inspect}"
     legals.each { |ev|
-      # puts "MINIMAX EXPLORING #{ev.inspect} at depth=#{@depth}"
+      puts "MINIMAX EXPLORING #{ev.inspect} at depth=#{@depth}"
       # if @depth == 2
       #   puts 'moomoo'
       # end
@@ -60,7 +61,8 @@ class MinimaxArbiter < AdversarialSearchArbiter
       val = [val, minval].max
       @depth-=1
       node.restore
-      # puts "MINIMAX FINISHED EXPLORING #{ev.inspect} at depth=#{@depth}"
+      puts "MINIMAX FINISHED EXPLORING #{ev.inspect} at depth=#{@depth}"
+      # GC.start
     }
     val
   end
