@@ -1,3 +1,5 @@
+require_relative 'arbiter_event_selectors/default_event_selector'
+
 class Arbiter
 
   attr_accessor :program, :selector
